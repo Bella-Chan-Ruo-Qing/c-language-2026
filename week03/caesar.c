@@ -17,7 +17,11 @@ for(i=0; text[i] !='\0'; i = i + 1)
 {
 if (text[i]>='a' && text[i]<= 'z')
 {
-text[i] = (text[i] - 'a' +shift) % 26 + 'a';
+text[i] = (text[i] - 'a' + shift) % 26 + 'a';
+}
+if (text[i]>='A' && text[i]<= 'Z')
+{
+text[i] = (text[i] - 'A' + shift) % 26 + 'A';
 }
 }
 
@@ -28,9 +32,13 @@ fgets(text,sizeof(text),stdin);
 
 for(i=0; text[i] !='\0'; i = i + 1)
 {
-if(text[i]>='a' && text[i]<= 'z')
+if (text[i]>='a' && text[i]<= 'z')
 {
 text[i] = (text[i] - 'a' - shift + 26) % 26 + 'a';
+}
+if (text[i]>='A' && text[i]<= 'Z')
+{
+text[i] = (text[i] - 'A' - shift + 26) % 26 + 'A';
 }
 }
 
