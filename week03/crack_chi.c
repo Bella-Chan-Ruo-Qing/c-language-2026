@@ -12,14 +12,53 @@ int main(void)
     int cnt[26];
     int k, g, i, j, n;
     int s, bests;
+    int bestk;
     double chi, bestchi, diff, expect;
+    double total, sum;
 
     printf("请输入密文：");
     fgets(text, sizeof(text), stdin);
 
-    printf("请输入密钥长度 k：");
-    scanf("%d", &k);
+    /* 第一步：用重合指数自己算出密钥长度 k */
+    bestk = 0;
+    for (k = 1; k <= 8; k = k + 1)
+    {
+        sum = 0;
+        for (g = 0; g < k; g = g + 1)
+        {
+            for (i = 0; i < 26; i = i + 1)
+                cnt[i] = 0;
 
+            n = 0;
+            j = 0;
+            for (i = 0; text[i] != '\0'; i = i + 1)
+            {
+                if (text[i] >= 'a' && text[i] <= 'z')
+                {
+                    if (j % k == g)
+                    {
+                        cnt[text[i] - 'a'] = cnt[text[i] - 'a'] + 1;
+                        n = n + 1;
+                    }
+                    j = j + 1;
+                }
+            }
+
+            total = 0;
+            for (i = 0; i < 26; i = i + 1)
+                total = total + cnt[i] * (cnt[i] - 1);
+
+            sum = sum + total / (n * (n - 1));
+        }
+        if (bestk == 0 && sum / k >= 0.050)
+            bestk = k;
+    }
+    if (bestk == 0)
+        bestk = 1;
+    k = bestk;
+    printf("自动算出的密钥长度 k = %d\n", k);
+
+    /* 第二步：卡方检验算出密钥 */
     for (g = 0; g < k; g = g + 1)
     {
         for (i = 0; i < 26; i = i + 1)
@@ -67,6 +106,7 @@ int main(void)
         printf("%c", key[g]);
     printf("\n");
 
+    /* 第三步：用密钥解密整段 */
     j = 0;
     for (i = 0; text[i] != '\0'; i = i + 1)
     {
